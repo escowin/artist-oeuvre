@@ -6,8 +6,8 @@ const sequelize = new Sequelize(
   process.env.DB_USER,
   process.env.DB_PW,
   {
-    host: process.env.DB_HOST || 'localhost', // You can add a DB_HOST environment variable if needed
-    port: process.env.DB_PORT || 5432, // Change the port if your PostgreSQL server is running on a different port
+    host: process.env.DB_HOST || 'localhost',
+    port: process.env.DB_PORT || 5432,
     dialect: 'postgres'
   }
 );
