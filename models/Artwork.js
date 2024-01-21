@@ -1,5 +1,6 @@
 const { Model, DataTypes } = require("sequelize");
 const sequelize = require("../config/connection");
+const { dimensions } = require("../utils/helpers");
 
 class Artwork extends Model {}
 
@@ -19,31 +20,34 @@ Artwork.init(
       },
     },
     year: {
-        type: DataTypes.DATEONLY,
-        allowNull: false,
-        validate: {
-          isDate: true,
-        },
+      type: DataTypes.DATEONLY,
+      allowNull: false,
+      validate: {
+        isDate: true,
+      },
     },
     medium: {
-        type: DataTypes.STRING,
+      type: DataTypes.STRING,
     },
     dimensions: {
-        type: DataTypes.STRING,
+      type: DataTypes.STRING,
+      validate: {
+        isFormatted: (string) => dimensions(string) || "Invalid format",
+      },
     },
     description: {
-        type: DataTypes.STRING,
-        validate: {
-            len: [1, 180],
-          },
+      type: DataTypes.STRING,
+      validate: {
+        len: [1, 180],
+      },
     },
     user_id: {
-        type: DataTypes.INTEGER,
-        references: {
-          model: "user",
-          key: "id",
-        },
-    }
+      type: DataTypes.INTEGER,
+      references: {
+        model: "user",
+        key: "id",
+      },
+    },
   },
   {
     sequelize,

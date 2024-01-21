@@ -24,4 +24,6 @@ Tag.belongsToMany(Artwork, {
   foreignKey: "tag_id",
 });
 
+// tbd | SaleInfo model & 1:1 (Artwork:SaleInfo) associations
+
 module.exports = { User, Artwork, ArtworkTag, Tag };
