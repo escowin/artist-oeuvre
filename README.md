@@ -1,2 +1,2 @@
 # artist-oeuvre
-RESTful server-side Node app that facilitates artists to catalogue their work in a PostgreSQL database
+RESTful server-side app that facilitates artists to securely catalogue their work.
