@@ -1,7 +1,8 @@
 const { User } = require("../models");
 
 const userController = {
-  // CRUD methods
+  // CRUD operators
+  // - GET methods
   async getAllUsers(req, res) {
     try {
       const response = await User.findAll({
@@ -9,7 +10,7 @@ const userController = {
       });
 
       !response
-        ? res.status(404).json({ message: "users do not exist" })
+        ? res.status(404).json({ message: "user not found" })
         : res.json(response);
     } catch (err) {
       res.status(500).json(err);
@@ -24,13 +25,14 @@ const userController = {
       });
 
       !response
-        ? res.status(404).json({ message: "user does not exist" })
+        ? res.status(404).json({ message: "user not found" })
         : res.json(response);
     } catch (err) {
       res.status(500).json(err);
     }
   },
 
+  // - POST method
   async createUser(req, res) {
     try {
       const response = await User.create({
@@ -39,6 +41,37 @@ const userController = {
       });
 
       res.json(response);
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  },
+
+  // - PUT method
+  async updateUser(req, res) {
+    try {
+      const response = await User.update(req.body, {
+        individualHooks: true,
+        where: { id: req.params.id },
+      });
+
+      !response
+        ? res.status(404).json({ message: "user not found" })
+        : res.json(response);
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  },
+
+  // - DELETE method
+  async deleteUser(req, res) {
+    try {
+      const response = await User.destroy({
+        where: { id: req.params.id },
+      });
+
+      !response
+        ? res.status(404).json({ message: "user not found" })
+        : res.json({ message: "user successfully deleted" });
     } catch (err) {
       res.status(500).json(err);
     }
