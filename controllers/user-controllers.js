@@ -1,84 +1,92 @@
 const { User } = require("../models");
 
-// crud methods
 const userController = {
-  // read
-  getAllUsers(req, res) {
-    User.findAll({
-      // reads user data aside from the password attribute
-      attributes: { exclude: ["password"] },
-    })
-      .then((dbUserData) => res.json(dbUserData))
-      .catch((err) => res.status(500).json(err));
-  },
-  getUserById(req, res) {
-    User.findOne({
-      attributes: { exclude: ["password"] },
-      where: { id: req.params.id },
-    })
-      .then((dbUserData) => {
-        if (!dbUserData) {
-          res.status(404).json({ message: "user does not exist" });
-          return;
-        }
-        res.json(dbUserData);
-      })
-      .catch((err) => res.status(500).json(err));
-  },
-  // create
-  createUser(req, res) {
-    console.log(req.body)
-    User.create({
-      username: req.body.username,
-      password: req.body.password,
-    })
-      .then((dbUserData) => res.json(dbUserData))
-      .catch((err) => res.status(500).json(err));
+  // CRUD methods
+  async getAllUsers(req, res) {
+    try {
+      const response = await User.findAll({
+        attributes: { exclude: ["password"] },
+      });
+
+      !response
+        ? res.status(404).json({ message: "users do not exist" })
+        : res.json(response);
+    } catch (err) {
+      res.status(500).json(err);
+    }
   },
 
-  // logging in & out | create & destroy sessions
-  // - uses .post() & ../users/login endpoint
-  login(req, res) {
-    console.log(req.body)
-    User.findOne({
-      where: {
+  async getUserById(req, res) {
+    try {
+      const response = await User.findOne({
+        attributes: { exclude: ["password"] },
+        where: { id: req.params.id },
+      });
+
+      !response
+        ? res.status(404).json({ message: "user does not exist" })
+        : res.json(response);
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  },
+
+  async createUser(req, res) {
+    try {
+      const response = await User.create({
         username: req.body.username,
-      },
-    }).then((dbUserData) => {
-      if (!dbUserData) {
+        password: req.body.password,
+      });
+
+      res.json(response);
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  },
+
+  // Creates login session so users can perform authguarded CRUD operations
+  async login(req, res) {
+    try {
+      // Attempts to locate user within the database by the provided username
+      const response = await User.findOne({
+        where: { username: req.body.username },
+      });
+      if (!response) {
         res.status(400).json({ message: "user not found" });
         return;
       }
 
-      // verifies dbUserData's password by comparing the plain text with the object's stored hashed password.
-      const validPassword = dbUserData.checkPassword(req.body.password);
+      // Validates the provided password by comparing it with the stored hashed password
+      const validPassword = response.checkPassword(req.body.password);
       if (!validPassword) {
         res.status(400).json({ message: "incorrect password" });
         return;
       }
 
-      // accesses the session information
+      // Successful authentication accesses the session information
       req.session.save(() => {
-        // declared session variables
-        req.session.user_id = dbUserData.id;
-        req.session.username = dbUserData.username;
+        req.session.user_id = response.id;
+        req.session.username = response.username;
         req.session.loggedIn = true;
 
-        res.json({ user: dbUserData, message: "you are now logged in" });
+        // Responds with the user details & login message
+        res.json({ user: response, message: "you are now logged in" });
       });
-    });
+    } catch (err) {
+      res.status(500).json(err);
+    }
   },
 
-  // - logout uses .post() and ../users/logout endpoint
+  // Terminates login session
   logout(req, res) {
-    if (req.session.loggedIn) {
-      req.session.destroy(() => {
-        res.status(204).end();
-      });
-    } else {
-      res.status(404).end();
+    try {
+      req.session.loggedIn
+        ? req.session.destroy(() => res.status(204).end())
+        : res.status(404).end();
+    } catch (err) {
+      res.status(500).json({ message: "Internal Server Error: " + err });
     }
-  }
+  },
 };
 
 module.exports = userController;
