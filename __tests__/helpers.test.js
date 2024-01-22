@@ -1,6 +1,6 @@
 const { dimensions } = require("../utils/helpers");
 
-// Dimensions format string
+// Artwork dimensions string formatting
 test("checks if array values are valid for string formatting", () => {
   const validValues1 = [4, 3, "in"];
   const validValues2 = [5.5, 2.45, "cm"];
