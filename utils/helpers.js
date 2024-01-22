@@ -7,19 +7,38 @@ module.exports = {
     }
     return true;
   },
-  dimensions: (values) => {
-    const [height, width, unit] = values;
+  dimensions: (array) => {
+    let height, width, depth, unit;
 
-    // Checks for all required values
-    if (typeof height !== 'number' || typeof width !== 'number' || typeof unit !== 'string') {
-      return false
+    // Determines whether or not artwork is 3D
+    if (array.length === 4) {
+      [height, width, depth, unit] = array;
+    } else if (array.length === 3) {
+      [height, width, unit] = array;
+    } else {
+      return false; // Invalid array length
+    }
+
+    // Checks for valid numeric values
+    if (
+      typeof height !== 'number' ||
+      typeof width !== 'number' ||
+      (depth !== undefined && typeof depth !== 'number') ||
+      typeof unit !== 'string'
+    ) {
+      return false;
     }
 
     // Formats the dimensions
-    const formattedString = `${length} ${unit} × ${width} ${unit}`;
+    let formattedString;
+    if (array.length === 4) {
+      formattedString = `${height} ${unit} × ${width} ${unit} × ${depth} ${unit}`;
+    } else {
+      formattedString = `${height} ${unit} × ${width} ${unit}`;
+    }
 
     // Applies validation on string
-    const regex = /^(\d+(\.\d+)?)\s*\w+\s*×\s*(\d+(\.\d+)?)\s*\w+$/;
+    const regex = /^(\d+(\.\d+)?)\s*\w+\s*×\s*(\d+(\.\d+)?)\s*\w+(\s*×\s*(\d+(\.\d+)?)\s*\w+)?$/;
     return regex.test(formattedString);
   },
 };
