@@ -1,9 +1,12 @@
 const { User } = require("../models");
 
 const userController = {
-  // CRUD operators
-  // - GET methods
+  // CRUD operations (except creating a user and logging in) require an active user session.
   async getAllUsers(req, res) {
+    if (!req.session) {
+      return res.status(401).json({ message: "unauthorized - must be logged in"});
+    }
+
     try {
       const response = await User.findAll({
         attributes: { exclude: ["password"] },
@@ -18,6 +21,10 @@ const userController = {
   },
 
   async getUserById({ params }, res) {
+    if (!req.session) {
+      return res.status(401).json({ message: "unauthorized - must be logged in"});
+    }
+
     try {
       const response = await User.findOne({
         attributes: { exclude: ["password"] },
@@ -48,6 +55,10 @@ const userController = {
 
   // - PUT method
   async updateUser(req, res) {
+    if (!req.session) {
+      return res.status(401).json({ message: "unauthorized - must be logged in"});
+    }
+
     try {
       const response = await User.update(req.body, {
         individualHooks: true,
@@ -64,6 +75,10 @@ const userController = {
 
   // - DELETE method
   async deleteUser({ params }, res) {
+    if (!req.session) {
+      return res.status(401).json({ message: "unauthorized - must be logged in"});
+    }
+
     try {
       const response = await User.destroy({
         where: { id: params.id },
@@ -112,6 +127,10 @@ const userController = {
 
   // Terminates login session
   logout(req, res) {
+    if (!req.session) {
+      return res.status(401).json({ message: "unauthorized - must be logged in"});
+    }
+    
     try {
       req.session.loggedIn
         ? req.session.destroy(() => res.status(204).end())

@@ -8,12 +8,15 @@ const {
   deleteArtwork,
 } = require("../../controllers/artwork-controllers");
 
+// authguard middleware | routes below are accesible only to logged in users
+router.use(withAuth);
+
 // public & authguarded api endpoints
-router.route("/").get(withAuth, getAllArtwork).post(createArtwork);
+router.route("/").get(getAllArtwork).post(createArtwork);
 router
   .route("/:id")
-  .get(withAuth, getArtworkById)
-  .put(withAuth, updateArtwork)
-  .delete(withAuth, deleteArtwork);
+  .get(getArtworkById)
+  .put(updateArtwork)
+  .delete(deleteArtwork);
 
 module.exports = router;

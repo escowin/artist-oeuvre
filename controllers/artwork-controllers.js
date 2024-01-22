@@ -2,7 +2,12 @@ const { Artwork, Tag, ArtworkTag } = require("../models");
 const { format_dimensions } = require("../utils/helpers");
 
 const artworkController = {
+  // CRUD operations require an active user session.
   async getAllArtwork(req, res) {
+    if (!req.session) {
+      return res.status(401).json({ message: "unauthorized - must be logged in"});
+    }
+
     try {
       const response = await Artwork.findAll();
 
@@ -15,6 +20,10 @@ const artworkController = {
   },
 
   async getArtworkById({ params }, res) {
+    if (!req.session) {
+      return res.status(401).json({ message: "unauthorized - must be logged in"});
+    }
+
     try {
       const response = await Artwork.findOne({
         where: { id: params.id },
@@ -36,6 +45,10 @@ const artworkController = {
   },
 
   async createArtwork(req, res) {
+    if (!req.session) {
+      return res.status(401).json({ message: "unauthorized - must be logged in"});
+    }
+
     try {
       const response = await Artwork.create({
         title: req.body.title,
@@ -79,6 +92,10 @@ const artworkController = {
   },
 
   async updateArtwork(req, res) {
+    if (!req.session) {
+      return res.status(401).json({ message: "unauthorized - must be logged in"});
+    }
+
     try {
       const response = await Artwork.update(
         {
@@ -129,6 +146,10 @@ const artworkController = {
   },
 
   async deleteArtwork({ params }, res) {
+    if (!req.session) {
+      return res.status(401).json({ message: "unauthorized - must be logged in"});
+    }
+    
     try {
       const response = await Artwork.destroy({
         where: { id: params.id },

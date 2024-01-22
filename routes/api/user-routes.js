@@ -12,12 +12,12 @@ const {
 
 // public & authguarded api endpoints
 router.route("/").get(withAuth, getAllUsers).post(createUser);
-router
-  .route("/:id")
-  .get(withAuth, getUserById)
-  .put(withAuth, updateUser)
-  .delete(withAuth, deleteUser);
 router.route("/login").post(login);
+
+// authguard middleware | routes below are accesible only to logged in users
+router.use(withAuth);
+
+router.route("/:id").get(getUserById).put(updateUser).delete(deleteUser);
 router.route("/logout").post(logout);
 
 module.exports = router;

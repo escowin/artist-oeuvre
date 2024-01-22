@@ -1,7 +1,12 @@
 const { Artwork, ArtworkTag, Tag } = require("../models");
 
 const tagController = {
+  // CRUD operations require an active user session.
   async getAllTags(req, res) {
+    if (!req.session) {
+      return res.status(401).json({ message: "unauthorized - must be logged in"});
+    }
+
     try {
       const response = await Tag.findAll({
         order: [["tag_name", "ASC"]],
@@ -16,6 +21,10 @@ const tagController = {
   },
 
   async getTagById({ params }, res) {
+    if (!req.session) {
+      return res.status(401).json({ message: "unauthorized - must be logged in"});
+    }
+
     try {
       const response = await Tag.findOne({
         where: { id: params.id },
@@ -36,6 +45,10 @@ const tagController = {
   },
 
   async createTag({ body }, res) {
+    if (!req.session) {
+      return res.status(401).json({ message: "unauthorized - must be logged in"});
+    }
+
     try {
       const response = await Tag.create({
         tag_name: body.tag_name,
@@ -48,6 +61,10 @@ const tagController = {
   },
 
   async updateTag(req, res) {
+    if (!req.session) {
+      return res.status(401).json({ message: "unauthorized - must be logged in"});
+    }
+
     try {
       const response = await Tag.update(req.body, {
         where: { id: req.params.id },
@@ -63,6 +80,10 @@ const tagController = {
   },
 
   async deleteTag({ params }, res) {
+    if (!req.session) {
+      return res.status(401).json({ message: "unauthorized - must be logged in"});
+    }
+    
     try {
       const response = await Tag.destroy({
         where: { id: params.id },

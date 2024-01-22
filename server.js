@@ -4,7 +4,8 @@ const session = require("express-session");
 const SequelizeStore = require("connect-session-sequelize")(session.Store);
 const routes = require("./routes");
 const sequelize = require("./config/connection");
-require('dotenv').config();
+const { version } = require("./package.json");
+require("dotenv").config();
 
 // Server variables
 const app = express();
@@ -27,10 +28,22 @@ app.use(routes);
 
 // Terminal message
 function initMessage() {
+  const appName = "artist-oeuvre";
   const year = new Date().getFullYear();
   const start = "2024.01.20 Sat 10.20pm";
+  const fin = "2024.01.22 Mon 01:30pm";
 
-  console.log(`  begin: ${start}\n  \u00a9${year} Edwin M. Escobar`);
+  console.log(`
+    ·················································
+    ·                                               ·
+    ·             ${appName} v${version}              ·
+    ·            © ${year} edwin m. escobar            ·
+    ·   https://github.com/escowin/${appName}    ·
+    ·                                               ·
+    ·················································\n
+      v${version} development time:
+      start:  ${start}
+      fin:    ${fin}\n`);
 }
 
 // Syncs Sequelize models to the database, then turn on the server
