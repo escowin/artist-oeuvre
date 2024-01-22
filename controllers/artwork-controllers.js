@@ -30,9 +30,6 @@ const artworkController = {
 
   async createArtwork(req, res) {
     try {
-    //   console.log(req.body);
-      console.log(format_dimensions(req.body.dimensions))
-
       const response = await Artwork.create({
         title: req.body.title,
         year: req.body.year,
@@ -50,8 +47,24 @@ const artworkController = {
 
   async updateArtwork(req, res) {
     try {
-      console.log(req.body);
-      console.log(req.params);
+      const response = await Artwork.update(
+        {
+          title: req.body.title,
+          year: req.body.year,
+          medium: req.body.medium,
+          dimensions: format_dimensions(req.body.dimensions),
+          description: req.body.description,
+          user_id: req.session.user_id,
+        },
+        {
+          where: { id: req.params.id },
+          returning: true
+        }
+      );
+
+      !response
+        ? res.status(404).json({ message: "artwork not found" })
+        : res.json(response[1]);
     } catch (err) {
       res.status(500).json(err);
     }
@@ -59,7 +72,13 @@ const artworkController = {
 
   async deleteArtwork(req, res) {
     try {
-      console.log(req.params);
+      const response = await Artwork.destroy({
+        where: { id: req.params.id },
+      });
+
+      !response
+        ? res.status(404).json({ message: "artwork not found" })
+        : res.json({ message: "artwork successfully deleted"});
     } catch (err) {
       res.status(500).json(err);
     }
