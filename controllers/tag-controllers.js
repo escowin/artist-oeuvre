@@ -1,41 +1,76 @@
 const { Artwork, ArtworkTag, Tag } = require("../models");
 
 const tagController = {
-  getAllTags(req, res) {
+  async getAllTags(req, res) {
     try {
-      console.log(req);
+      const response = await Tag.findAll({
+        order: [["tag_name", "ASC"]],
+      });
+
+      !response
+        ? res.status(404).json({ message: "tags not found" })
+        : res.json(response);
     } catch (err) {
       res.status(500).json(err);
     }
   },
 
-  getTagById(req, res) {
+  async getTagById({ params }, res) {
     try {
-      console.log(req);
+      const response = await Tag.findOne({
+        where: { id: params.id },
+        include: [
+          {
+            model: Artwork,
+            through: ArtworkTag,
+          },
+        ],
+      });
+
+      !response
+        ? res.status(404).json({ message: "tag not found" })
+        : res.json(response);
     } catch (err) {
       res.status(500).json(err);
     }
   },
 
-  createTag(req, res) {
+  async createTag({ body }, res) {
     try {
-      console.log(req);
+      const response = await Tag.create({
+        tag_name: body.tag_name,
+      });
+
+      res.json(response);
     } catch (err) {
       res.status(500).json(err);
     }
   },
 
-  updateTag(req, res) {
+  async updateTag(req, res) {
     try {
-      console.log(req);
+      const response = await Tag.update(req.body, {
+        where: { id: req.params.id },
+        returning: true,
+      });
+
+      !response
+        ? res.status(404).json({ message: "tag not found" })
+        : res.json(response[1]);
     } catch (err) {
       res.status(500).json(err);
     }
   },
 
-  deleteTag(req, res) {
+  async deleteTag({ params }, res) {
     try {
-      console.log(req);
+      const response = await Tag.destroy({
+        where: { id: params.id },
+      });
+
+      !response
+        ? res.status(404).json({ message: "tag not found" })
+        : res.json({ message: "tag successfully deleted" });
     } catch (err) {
       res.status(500).json(err);
     }

@@ -17,11 +17,11 @@ const userController = {
     }
   },
 
-  async getUserById(req, res) {
+  async getUserById({ params }, res) {
     try {
       const response = await User.findOne({
         attributes: { exclude: ["password"] },
-        where: { id: req.params.id },
+        where: { id: params.id },
       });
 
       !response
@@ -33,11 +33,11 @@ const userController = {
   },
 
   // - POST method
-  async createUser(req, res) {
+  async createUser({ body }, res) {
     try {
       const response = await User.create({
-        username: req.body.username,
-        password: req.body.password,
+        username: body.username,
+        password: body.password,
       });
 
       res.json(response);
@@ -63,10 +63,10 @@ const userController = {
   },
 
   // - DELETE method
-  async deleteUser(req, res) {
+  async deleteUser({ params }, res) {
     try {
       const response = await User.destroy({
-        where: { id: req.params.id },
+        where: { id: params.id },
       });
 
       !response

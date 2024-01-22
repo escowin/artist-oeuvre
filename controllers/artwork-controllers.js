@@ -14,10 +14,10 @@ const artworkController = {
     }
   },
 
-  async getArtworkById(req, res) {
+  async getArtworkById({ params }, res) {
     try {
       const response = await Artwork.findOne({
-        where: { id: req.params.id },
+        where: { id: params.id },
       });
 
       !response
@@ -58,7 +58,7 @@ const artworkController = {
         },
         {
           where: { id: req.params.id },
-          returning: true
+          returning: true,
         }
       );
 
@@ -70,15 +70,15 @@ const artworkController = {
     }
   },
 
-  async deleteArtwork(req, res) {
+  async deleteArtwork({ params }, res) {
     try {
       const response = await Artwork.destroy({
-        where: { id: req.params.id },
+        where: { id: params.id },
       });
 
       !response
         ? res.status(404).json({ message: "artwork not found" })
-        : res.json({ message: "artwork successfully deleted"});
+        : res.json({ message: "artwork successfully deleted" });
     } catch (err) {
       res.status(500).json(err);
     }
