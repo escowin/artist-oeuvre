@@ -120,7 +120,6 @@ const artworkController = {
         ],
       });
 
-      console.log(artwork);
       !response
         ? res.status(404).json({ message: "artwork not found" })
         : res.json(artwork);
