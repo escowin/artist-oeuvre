@@ -32,7 +32,7 @@ Artwork.init(
     dimensions: {
       type: DataTypes.STRING,
       validate: {
-        isFormatted: (string) => dimensions(string) || "Invalid format",
+        isFormatted: (values) => dimensions(values) || "Invalid format",
       },
     },
     description: {

@@ -7,9 +7,20 @@ module.exports = {
     }
     return true;
   },
-  dimensions: (string) => {
-    const regex = /^\d+\s*×\s*\d+$/;
-    return regex.test(string) ? true : false;
+  dimensions: (values) => {
+    const [height, width, unit] = values;
+
+    // Checks for all required values
+    if (typeof height !== 'number' || typeof width !== 'number' || typeof unit !== 'string') {
+      return false
+    }
+
+    // Formats the dimensions
+    const formattedString = `${length} ${unit} × ${width} ${unit}`;
+
+    // Applies validation on string
+    const regex = /^(\d+(\.\d+)?)\s*\w+\s*×\s*(\d+(\.\d+)?)\s*\w+$/;
+    return regex.test(formattedString);
   },
 };
     
