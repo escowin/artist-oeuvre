@@ -7,7 +7,17 @@ module.exports = {
     }
     return true;
   },
-  dimensions: (array) => {
+  dimensions_regex: (string) => {
+    const regex =
+      /^(\d+(\.\d+)?)\s*\w+\s*×\s*(\d+(\.\d+)?)\s*\w+(\s*×\s*(\d+(\.\d+)?)\s*\w+)?$/;
+
+    // Applies validation on string
+    if (!regex.test(string)) {
+      throw new Error("invalid dimensions");
+    }
+    return true;
+  },
+  format_dimensions: (array) => {
     let height, width, depth, unit;
 
     // Determines whether or not artwork is 3D
@@ -35,9 +45,6 @@ module.exports = {
         ? `${height} ${unit} × ${width} ${unit} × ${depth} ${unit}`
         : `${height} ${unit} × ${width} ${unit}`;
 
-    // Applies validation on string
-    const regex =
-      /^(\d+(\.\d+)?)\s*\w+\s*×\s*(\d+(\.\d+)?)\s*\w+(\s*×\s*(\d+(\.\d+)?)\s*\w+)?$/;
-    return regex.test(formattedString);
+    return formattedString;
   },
 };

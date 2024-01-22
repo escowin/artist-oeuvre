@@ -1,6 +1,6 @@
 const { Model, DataTypes } = require("sequelize");
 const sequelize = require("../config/connection");
-const { dimensions } = require("../utils/helpers");
+const { dimensions_regex } = require("../utils/helpers");
 
 class Artwork extends Model {}
 
@@ -32,7 +32,7 @@ Artwork.init(
     dimensions: {
       type: DataTypes.STRING,
       validate: {
-        isFormatted: (values) => dimensions(values) || "Invalid format",
+        isFormatted: (values) => dimensions_regex(values) || "Invalid format",
       },
     },
     description: {
