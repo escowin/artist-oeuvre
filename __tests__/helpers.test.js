@@ -1,12 +1,11 @@
 const { dimensions } = require("../utils/helpers");
 
 // Dimensions format string
-test("checks if array values are valid for be formatted", () => {
+test("checks if array values are valid for string formatting", () => {
   const validValues1 = [4, 3, "in"];
   const validValues2 = [5.5, 2.45, "cm"];
   const validValues3 = [100, 200, "px"];
   const validValues4 = [8, 10, 2, "m"];
-
 
   const invalidValues1 = [4, 5];
   const invalidValues2 = [5, "cm"];
@@ -26,5 +25,4 @@ test("checks if array values are valid for be formatted", () => {
   expect(dimensions(invalidValues3)).toBe(false); // Extra value
   expect(dimensions(invalidValues4)).toBe(false); // Invalid numeric value
   expect(dimensions(invalidValues5)).toBe(false); // Invalid value order
-
 });

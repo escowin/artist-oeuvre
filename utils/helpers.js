@@ -19,27 +19,25 @@ module.exports = {
       return false; // Invalid array length
     }
 
-    // Checks for valid numeric values
+    // Checks for valid numeric values. Filters out `depth` in the case of 2D artwork
     if (
-      typeof height !== 'number' ||
-      typeof width !== 'number' ||
-      (depth !== undefined && typeof depth !== 'number') ||
-      typeof unit !== 'string'
+      ![height, width, depth]
+        .filter((val) => typeof val !== "undefined")
+        .every((val) => typeof val === "number") ||
+      typeof unit !== "string"
     ) {
       return false;
     }
 
-    // Formats the dimensions
-    let formattedString;
-    if (array.length === 4) {
-      formattedString = `${height} ${unit} × ${width} ${unit} × ${depth} ${unit}`;
-    } else {
-      formattedString = `${height} ${unit} × ${width} ${unit}`;
-    }
+    // Formats the string to reflect either 2D & 3D artwork dimensions
+    let formattedString =
+      array.length === 4
+        ? `${height} ${unit} × ${width} ${unit} × ${depth} ${unit}`
+        : `${height} ${unit} × ${width} ${unit}`;
 
     // Applies validation on string
-    const regex = /^(\d+(\.\d+)?)\s*\w+\s*×\s*(\d+(\.\d+)?)\s*\w+(\s*×\s*(\d+(\.\d+)?)\s*\w+)?$/;
+    const regex =
+      /^(\d+(\.\d+)?)\s*\w+\s*×\s*(\d+(\.\d+)?)\s*\w+(\s*×\s*(\d+(\.\d+)?)\s*\w+)?$/;
     return regex.test(formattedString);
   },
 };
-    
