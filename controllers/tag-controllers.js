@@ -4,7 +4,7 @@ const tagController = {
   // CRUD operations require an active user session.
   async getAllTags(req, res) {
     if (!req.session) {
-      return res.status(401).json({ message: "unauthorized - must be logged in"});
+      return res.status(401).json({ message: "must be logged in" });
     }
 
     try {
@@ -20,9 +20,9 @@ const tagController = {
     }
   },
 
-  async getTagById({ params }, res) {
+  async getTagById(req, res) {
     if (!req.session) {
-      return res.status(401).json({ message: "unauthorized - must be logged in"});
+      return res.status(401).json({ message: "must be logged in" });
     }
 
     try {
@@ -44,9 +44,9 @@ const tagController = {
     }
   },
 
-  async createTag({ body }, res) {
+  async createTag(req, res) {
     if (!req.session) {
-      return res.status(401).json({ message: "unauthorized - must be logged in"});
+      return res.status(401).json({ message: "must be logged in" });
     }
 
     try {
@@ -62,7 +62,7 @@ const tagController = {
 
   async updateTag(req, res) {
     if (!req.session) {
-      return res.status(401).json({ message: "unauthorized - must be logged in"});
+      return res.status(401).json({ message: "must be logged in" });
     }
 
     try {
@@ -79,11 +79,11 @@ const tagController = {
     }
   },
 
-  async deleteTag({ params }, res) {
+  async deleteTag(req, res) {
     if (!req.session) {
-      return res.status(401).json({ message: "unauthorized - must be logged in"});
+      return res.status(401).json({ message: "must be logged in" });
     }
-    
+
     try {
       const response = await Tag.destroy({
         where: { id: params.id },

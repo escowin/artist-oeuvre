@@ -5,11 +5,13 @@ const artworkController = {
   // CRUD operations require an active user session.
   async getAllArtwork(req, res) {
     if (!req.session) {
-      return res.status(401).json({ message: "unauthorized - must be logged in"});
+      return res.status(401).json({ message: "must be logged in" });
     }
 
     try {
-      const response = await Artwork.findAll();
+      const response = await Artwork.findAll({
+        where: { user_id: req.session.user_id },
+      });
 
       !response
         ? res.status(404).json({ message: "artworks not found" })
@@ -19,14 +21,14 @@ const artworkController = {
     }
   },
 
-  async getArtworkById({ params }, res) {
+  async getArtworkById(req, res) {
     if (!req.session) {
-      return res.status(401).json({ message: "unauthorized - must be logged in"});
+      return res.status(401).json({ message: "must be logged in" });
     }
 
     try {
       const response = await Artwork.findOne({
-        where: { id: params.id },
+        where: { id: req.params.id, user_id: req.session.user_id },
         include: [
           {
             model: Tag,
@@ -46,7 +48,7 @@ const artworkController = {
 
   async createArtwork(req, res) {
     if (!req.session) {
-      return res.status(401).json({ message: "unauthorized - must be logged in"});
+      return res.status(401).json({ message: "must be logged in" });
     }
 
     try {
@@ -93,7 +95,7 @@ const artworkController = {
 
   async updateArtwork(req, res) {
     if (!req.session) {
-      return res.status(401).json({ message: "unauthorized - must be logged in"});
+      return res.status(401).json({ message: "must be logged in" });
     }
 
     try {
@@ -104,13 +106,17 @@ const artworkController = {
           medium: req.body.medium,
           dimensions: format_dimensions(req.body.dimensions),
           description: req.body.description,
-          user_id: req.session.user_id,
         },
         {
-          where: { id: req.params.id },
+          where: { id: req.params.id, user_id: req.session.user_id },
           returning: true,
         }
       );
+
+      // Triggers when user_id & req.session.user_id mismatch
+      if (response[0] === 0) {
+        return res.status(404).json({ message: "artwork not found" });
+      }
 
       await ArtworkTag.destroy({ where: { artwork_id: req.params.id } });
 
@@ -145,14 +151,15 @@ const artworkController = {
     }
   },
 
-  async deleteArtwork({ params }, res) {
+  async deleteArtwork(req, res) {
     if (!req.session) {
-      return res.status(401).json({ message: "unauthorized - must be logged in"});
+      return res.status(401).json({ message: "must be logged in" });
     }
-    
+
+    // Only users can delete their own artwork
     try {
       const response = await Artwork.destroy({
-        where: { id: params.id },
+        where: { id: req.params.id, user_id: req.session.user_id },
       });
 
       !response

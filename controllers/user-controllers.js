@@ -4,7 +4,7 @@ const userController = {
   // CRUD operations (except creating a user and logging in) require an active user session.
   async getAllUsers(req, res) {
     if (!req.session) {
-      return res.status(401).json({ message: "unauthorized - must be logged in"});
+      return res.status(401).json({ message: "must be logged in" });
     }
 
     try {
@@ -20,15 +20,15 @@ const userController = {
     }
   },
 
-  async getUserById({ params }, res) {
+  async getUserById(req, res) {
     if (!req.session) {
-      return res.status(401).json({ message: "unauthorized - must be logged in"});
+      return res.status(401).json({ message: "must be logged in" });
     }
 
     try {
       const response = await User.findOne({
         attributes: { exclude: ["password"] },
-        where: { id: params.id },
+        where: { id: req.params.id },
       });
 
       !response
@@ -55,8 +55,11 @@ const userController = {
 
   // - PUT method
   async updateUser(req, res) {
+    // User must be logged in, and can only update their own account
     if (!req.session) {
-      return res.status(401).json({ message: "unauthorized - must be logged in"});
+      return res.status(401).json({ message: "must be logged in" });
+    } else if (req.params.id !== req.session.user_id) {
+      return res.status(404).json({ message: "user not found" });
     }
 
     try {
@@ -74,15 +77,16 @@ const userController = {
   },
 
   // - DELETE method
-  async deleteUser({ params }, res) {
-    if (!req.session) {
-      return res.status(401).json({ message: "unauthorized - must be logged in"});
+  async deleteUser({ session, params }, res) {
+    // User must be logged in, and can only delete their own account
+    if (!session) {
+      return res.status(401).json({ message: "must be logged in" });
+    } else if (params.id !== session.user_id) {
+      return res.status(404).json({ message: "user not found" });
     }
 
     try {
-      const response = await User.destroy({
-        where: { id: params.id },
-      });
+      const response = await User.destroy({ where: { id: params.id } });
 
       !response
         ? res.status(404).json({ message: "user not found" })
@@ -100,14 +104,14 @@ const userController = {
         where: { username: req.body.username },
       });
       if (!response) {
-        res.status(400).json({ message: "user not found" });
+        res.status(400).json({ message: "invalid credentials" });
         return;
       }
 
       // Validates the provided password by comparing it with the stored hashed password
       const validPassword = response.checkPassword(req.body.password);
       if (!validPassword) {
-        res.status(400).json({ message: "incorrect password" });
+        res.status(400).json({ message: "invalid credentials" });
         return;
       }
 
@@ -128,9 +132,9 @@ const userController = {
   // Terminates login session
   logout(req, res) {
     if (!req.session) {
-      return res.status(401).json({ message: "unauthorized - must be logged in"});
+      return res.status(401).json({ message: "must be logged in" });
     }
-    
+
     try {
       req.session.loggedIn
         ? req.session.destroy(() => res.status(204).end())

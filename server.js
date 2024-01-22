@@ -31,7 +31,7 @@ function initMessage() {
   const appName = "artist-oeuvre";
   const year = new Date().getFullYear();
   const start = "2024.01.20 Sat 10.20pm";
-  const fin = "2024.01.22 Mon 01:30pm";
+  const fin = "2024.01.22 Mon 04:25pm";
 
   console.log(`
     ·················································
