@@ -27,7 +27,7 @@ const tagController = {
 
     try {
       const response = await Tag.findOne({
-        where: { id: params.id },
+        where: { id: req.params.id },
         include: [
           {
             model: Artwork,
@@ -51,7 +51,7 @@ const tagController = {
 
     try {
       const response = await Tag.create({
-        tag_name: body.tag_name,
+        tag_name: req.body.tag_name,
       });
 
       res.json(response);
@@ -86,7 +86,7 @@ const tagController = {
 
     try {
       const response = await Tag.destroy({
-        where: { id: params.id },
+        where: { id: req.params.id },
       });
 
       !response

@@ -20,7 +20,7 @@ Artwork.init(
       },
     },
     year: {
-      type: DataTypes.DATEONLY,
+      type: DataTypes.INTEGER,
       allowNull: false,
       validate: {
         isDate: true,

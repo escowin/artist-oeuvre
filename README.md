@@ -98,11 +98,9 @@ After starting the app, use your preferred API developer tool to interact with t
   - Tags endpoint: http://localhost:3005/api/tags/
   - To perform `GET`, `PUT`, or `DELETE` requests for specific objects, append its `:id` value to the endpoint, ie: `http://localhost:3005/api/artwork/1`
 
-<!-- ![mobile](./assets/img/artist-oeuvre-sm.jpg)
+![post request](./assets/img/artist-oeuvre-post.jpg)
 
-![tablet](./assets/img/artist-oeuvre-md.jpg)
-
-![desktop](./assets/img/artist-oeuvre-lg.jpg) -->
+![get request](./assets/img/artist-oeuvre-get.jpg)
 
 ## Features
 

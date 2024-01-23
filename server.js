@@ -47,6 +47,7 @@ function initMessage() {
 }
 
 // Syncs Sequelize models to the database, then turn on the server
+// `force: true` erases current data, `force: false` maintains existing data
 sequelize
   .sync({ force: false })
   .then(() => {
